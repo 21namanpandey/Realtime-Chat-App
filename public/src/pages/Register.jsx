@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -27,19 +27,25 @@ const Register = () => {
         theme: "dark",
     }
 
+    useEffect(() => {
+        if (localStorage.getItem('chat-app-user')) {
+            navigate('/')
+        }
+    }, []);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if(handleValidation()) {
+        if (handleValidation()) {
             const { password, username, email } = values;
-            const {data} = await axios.post(registerRoute, {
-                username, 
-                email, 
+            const { data } = await axios.post(registerRoute, {
+                username,
+                email,
                 password,
             })
-            if(data.status === false){
+            if (data.status === false) {
                 toast.error(data.msg, toastOptions)
             }
-            if(data.status === true){
+            if (data.status === true) {
                 localStorage.setItem('chat-app-user', JSON.stringify(data.user))
                 navigate("/");
             }
@@ -57,7 +63,7 @@ const Register = () => {
         } else if (password.length < 8) {
             toast.error("Password should be equal or greater than 8 characters", toastOptions);
             return false;
-        }else if(email === ""){
+        } else if (email === "") {
             toast.error("email is required", toastOptions);
             return false;
         }
