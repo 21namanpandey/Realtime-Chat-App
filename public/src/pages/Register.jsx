@@ -20,10 +20,10 @@ const Register = () => {
     });
 
     const toastOptions = {
-        postion: "bottom-close",
+        position: "bottom-right",
         autoClose: 8000,
         pauseOnHover: true,
-        graggable: true,
+        draggable: true,
         theme: "dark",
     }
 
@@ -163,7 +163,7 @@ const FormContainer = styled.div`
         }
     }
     button {
-        background-color: #4e0eff;
+        background-color: #997af0;
         color: white;
         padding: 1rem 2rem;
         border: none;

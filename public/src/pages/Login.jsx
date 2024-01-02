@@ -18,10 +18,10 @@ const Login = () => {
     });
 
     const toastOptions = {
-        postion: "bottom-close",
+        position: "bottom-right",
         autoClose: 8000,
         pauseOnHover: true,
-        graggable: true,
+        draggable: true,
         theme: "dark",
     }
 
