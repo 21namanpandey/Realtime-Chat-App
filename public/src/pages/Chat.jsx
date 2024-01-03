@@ -10,24 +10,53 @@ const Chat = () => {
     const [currentUser, setCurrentUser] = useState(undefined);
     const navigate = useNavigate();
 
-    useEffect(async () => {
-        if (!localStorage.getItem('chat-app-user')) {
-            navigate('/login');
-        }else{
-            setCurrentUser(await JSON.parse(localStorage.getItem("chat-app-user")));
-        }
-    }, [])
-
-    useEffect(async () => {
-        if(currentUser){
-            if(currentUser.isAvatarImageSet){
-                const data = await axios.get(`${allUserRoutes}/${currentUser._id}`);
-                setContacts(data.data);
-            }else{
-                navigate("/setAvatar");
+    // useEffect(async () => {
+    //     if (!localStorage.getItem('chat-app-user')) {
+    //         navigate('/login');
+    //     }else{
+    //         setCurrentUser(await JSON.parse(localStorage.getItem("chat-app-user")));
+    //     }
+    // }, [])
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!localStorage.getItem('chat-app-user')) {
+                navigate('/login');
+            } else {
+                setCurrentUser(await JSON.parse(localStorage.getItem('chat-app-user')));
             }
-        }
-    }, [])
+        };
+
+        fetchData();
+    }, [navigate]);
+
+    // useEffect(async () => {
+    //     if(currentUser){
+    //         if(currentUser.isAvatarImageSet){
+    //             const data = await axios.get(`${allUserRoutes}/${currentUser._id}`);
+    //             setContacts(data.data);
+    //         }else{
+    //             navigate("/setAvatar");
+    //         }
+    //     }
+    // }, [])
+    useEffect(() => {
+        const fetchContacts = async () => {
+            if (currentUser) {
+                if (currentUser.isAvatarImageSet) {
+                    try {
+                        const data = await axios.get(`${allUserRoutes}/${currentUser._id}`);
+                        setContacts(data.data);
+                    } catch (error) {
+                        console.error('Error fetching contacts:', error);
+                    }
+                } else {
+                    navigate('/setAvatar');
+                }
+            }
+        };
+
+        fetchContacts();
+    }, [currentUser, navigate]);
 
     return (
         <>
