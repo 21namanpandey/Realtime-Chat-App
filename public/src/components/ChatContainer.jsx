@@ -1,11 +1,73 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import LogOut from './LogOut';
 import ChatInput from './ChatInput';
 import Messages from './Messages';
+import axios from 'axios';
+import { getAllMessageRoutes, sendMessageRoutes } from '../utils/APIRoutes';
 
-const ChatContainer = ({ currentChat }) => {
-    const handleSendMsg = async (msg) => {};
+const ChatContainer = ({ currentChat, currentUser }) => {
+
+    const [messages, setMessages] = useState([]);
+
+    // useEffect(async () => {
+    //     const response = await axios.post(getAllMessageRoutes, {
+    //         from: currentUser._id,
+    //         to: currentChat._id,
+    //     });
+    //     setMessages(response.data);
+    // }, [currentChat]);
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await axios.post(getAllMessageRoutes, {
+    //                 from: currentUser._id,
+    //                 to: currentChat._id,
+    //             });
+    //             setMessages(response.data);
+    //         } catch (error) {
+    //             console.error('Error fetching messages:', error);
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, [currentChat]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (currentUser && currentUser._id) {
+                    const response = await axios.post(getAllMessageRoutes, {
+                        from: currentUser._id,
+                        to: currentChat._id,
+                    });
+                    setMessages(response.data);
+                } else {
+                    console.error('Error: currentUser or currentUser._id is undefined');
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        };
+
+        // Only run the effect if currentUser or currentUser._id changes
+        if (currentUser && currentUser._id) {
+            fetchData();
+        }
+    }, [currentChat, currentUser]);  // currentUser is not included in the dependencies
+
+
+
+
+    const handleSendMsg = async (msg) => {
+        await axios.post(sendMessageRoutes, {
+            from: currentUser._id,
+            to: currentUser._id,
+            message: msg,
+        })
+    };
+
     return (
         <>
             {
@@ -26,7 +88,23 @@ const ChatContainer = ({ currentChat }) => {
                             </div>
                             <LogOut />
                         </div>
-                        <Messages />
+                        <div className="chat-messages">
+                            {
+                                messages.map((message) => {
+                                    return (
+                                        <div>
+                                            <div className={`message ${message.fromSelf ? "sended" : "recieved"}`} >
+                                                <div className="content">
+                                                    <p>
+                                                        {message.message}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                         <ChatInput handleSendMsg={handleSendMsg} />
                     </Container>
                 )
@@ -41,70 +119,84 @@ const Container = styled.div`
     gap: 0.1rem;
     overflow: hidden;
     @media screen and (min-width: 720px) and (max-width: 1080px) {
-        grid-template-rows: 15% 70% 15%;
+    grid-template-rows: 15% 70% 15%;
     }
+
     .chat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 2rem;
-        .user-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+
+    .user-details {
         display: flex;
         align-items: center;
         gap: 1rem;
+
         .avatar {
-            img {
+        img {
             height: 3rem;
-            }
         }
+        }
+
         .username {
-            h3 {
+        h3 {
             color: white;
-            }
         }
         }
     }
+    }
+
     .chat-messages {
-        padding: 1rem 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        overflow: auto;
-        &::-webkit-scrollbar {
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
         width: 0.2rem;
+
         &-thumb {
-            background-color: #ffffff39;
-            width: 0.1rem;
-            border-radius: 1rem;
+        background-color: #ffffff39;
+        width: 0.1rem;
+        border-radius: 1rem;
         }
-        }
-        .message {
+    }
+
+    .message {
         display: flex;
         align-items: center;
+
         .content {
-            max-width: 40%;
-            overflow-wrap: break-word;
-            padding: 1rem;
-            font-size: 1.1rem;
-            border-radius: 1rem;
-            color: #d1d1d1;
-            @media screen and (min-width: 720px) and (max-width: 1080px) {
+        max-width: 40%;
+        overflow-wrap: break-word;
+        padding: 1rem;
+        font-size: 1.1rem;
+        border-radius: 1rem;
+        color: #d1d1d1;
+
+        @media screen and (min-width: 720px) and (max-width: 1080px) {
             max-width: 70%;
-            }
         }
         }
-        .sended {
+    }
+
+    .sended {
         justify-content: flex-end;
+
         .content {
-            background-color: #4f04ff21;
+        background-color: #4f04ff21;
         }
-        }
-        .recieved {
+    }
+
+    .recieved {
         justify-content: flex-start;
+
         .content {
-            background-color: #9900ff20;
+        background-color: #9900ff20;
         }
-        }
+    }
     }
 `;
 export default ChatContainer

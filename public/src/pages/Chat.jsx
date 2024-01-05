@@ -77,7 +77,7 @@ const Chat = () => {
                         isLoaded && currentChat === undefined ? (
                             <Welcome currentUser={currentUser} />
                         ) : (
-                            < ChatContainer currentChat={currentChat} />
+                            < ChatContainer currentChat={currentChat} currentUser={currentUser} />
                     )}
                 </div>
             </Container>
@@ -100,7 +100,7 @@ const Container = styled.div`
         background-color: #00000076;
         display: grid;
         grid-template-columns: 25% 75%;
-        @media screeen and (min-width: 720px) and (max-width: 1080px);
+        @media screen and (min-width: 720px) and (max-width: 1080px);
         grid-template-columns: 35% 65%;
     }
 `;
