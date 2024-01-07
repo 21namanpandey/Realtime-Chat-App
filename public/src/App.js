@@ -1,19 +1,22 @@
-import React from 'react'
-import {BrowserRouter, Routes, Route } from "react-router-dom"
-import Register from './pages/Register'
-import Login from './pages/Login'
-import Chat from './pages/Chat'
-import SetAvatar from './pages/SetAvatar'
+import React, { Suspense, lazy } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+
+const Chat = lazy(() => import("./pages/Chat"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const SetAvatar = lazy(() => import("./pages/SetAvatar"));
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/register" element={<Register/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/setAvatar" element={<SetAvatar/>} />
-        <Route path="/" element={<Chat/>} />
-      </Routes>
+      <Suspense fallback={<></>}>
+        <Routes>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/setAvatar" element={<SetAvatar />} />
+          <Route path="/" element={<Chat />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }
